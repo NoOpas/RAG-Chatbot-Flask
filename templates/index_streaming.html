@@ -1,0 +1,174 @@
+<!-- templates/index_streaming.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Помощник по УСП</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+    #chat-box {
+        scroll-behavior: smooth;
+    }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h1>Чат с помощником по УСП</h1>
+        <div id="chat-box"></div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Введите вопрос..." autofocus>
+            <button onclick="sendMessage()" id="send-btn">Отправить</button>
+        </div>
+    </div>
+
+    <script>
+    let eventSource;
+    let isUserAtBottom = true;
+
+    // Create scroll-to-bottom button
+    const scrollBtn = document.createElement("button");
+    scrollBtn.id = "scroll-to-bottom-btn";
+    scrollBtn.innerHTML = "⌄";
+    scrollBtn.title = "Прокрутить вниз";
+    document.body.appendChild(scrollBtn);
+
+    const chatBox = document.getElementById("chat-box");
+
+    function scrollToBottom() {
+        chatBox.scrollTop = chatBox.scrollHeight;
+        isUserAtBottom = true;
+        updateScrollButton();
+    }
+
+    function updateScrollButton() {
+        const isScrolledUp = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight > 15;
+        scrollBtn.classList.toggle("show", isScrolledUp && !isUserAtBottom);
+    }
+
+    function smartScroll() {
+        if (isUserAtBottom) {
+            const distance = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight;
+            if (distance < 30) {
+                // Auto-follow only if near bottom
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } else {
+                // User scrolled up intentionally
+                isUserAtBottom = false;
+            }
+        }
+        updateScrollButton();
+    }
+
+    // Bind scroll events
+    let scrollTimeout;
+    chatBox.addEventListener("scroll", () => {
+        isUserAtBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 15;
+        updateScrollButton();
+
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            isUserAtBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 15;
+            updateScrollButton();
+        }, 800);
+    });
+
+    scrollBtn.addEventListener("click", scrollToBottom);
+
+    // Rest of your existing JS (sendMessage, appendMessage, etc.)
+    function sendMessage() {
+        const inputField = document.getElementById("user-input");
+        const message = inputField.value.trim();
+        if (!message || eventSource) return;
+
+        appendMessage("Вы", message, "user-message");
+        inputField.value = "";
+        disableInput(true);
+
+        if (eventSource) eventSource.close();
+
+        // Reset scroll state on new query
+        isUserAtBottom = true;
+        scrollToBottom();
+
+        eventSource = new EventSource(`/stream_response?message=${encodeURIComponent(message)}`);
+        let answerDiv = null;
+
+        eventSource.onmessage = function(event) {
+            try {
+                const data = JSON.parse(event.data);
+                if (data.type === "token") {
+                    if (!answerDiv) {
+                        answerDiv = appendMessage("Ответ", "", "llm-message");
+                    }
+                    answerDiv.innerHTML += data.text.replace(/\n/g, "<br>");
+                    smartScroll();
+                }
+                if (data.type === "sources") {
+                    const sourcesDiv = document.createElement("div");
+                    sourcesDiv.style.marginTop = "10px";
+                    sourcesDiv.style.padding = "10px";
+                    sourcesDiv.style.backgroundColor = "#f8faf8";
+                    sourcesDiv.style.borderRadius = "8px";
+                    sourcesDiv.style.borderLeft = "2px solid #c8e6c9";
+
+                    const title = document.createElement("p");
+                    title.innerHTML = `<strong>${data.title}</strong>`;
+                    sourcesDiv.appendChild(title);
+
+                    const ul = document.createElement("ul");
+                    ul.className = "sources-list";
+                    data.urls.forEach(url => {
+                        const li = document.createElement("li");
+                        li.innerHTML = `<a href="${url}" target="_blank">${url}</a>`;
+                        ul.appendChild(li);
+                    });
+                    sourcesDiv.appendChild(ul);
+                    answerDiv.appendChild(sourcesDiv);
+                    smartScroll();
+                }
+                if (data.type === "error") {
+                    appendMessage("Ошибка", data.text, "error-message");
+                }
+            } catch (e) {
+                console.warn("Invalid SSE:", event.data);
+            }
+        };
+
+        eventSource.onerror = function() {
+            eventSource.close();
+            eventSource = null;
+            disableInput(false);
+            if (!answerDiv) {
+                appendMessage("Ошибка", "Не удалось получить ответ.", "error-message");
+            }
+        };
+    }
+
+    function appendMessage(sender, text, className) {
+        const div = document.createElement("div");
+        div.className = `message ${className}`;
+        div.innerHTML = `<strong>${sender}:</strong><br>${text}`;
+        chatBox.appendChild(div);
+        return div;
+    }
+
+    function disableInput(disabled) {
+        const input = document.getElementById("user-input");
+        const btn = document.getElementById("send-btn");
+        input.disabled = disabled;
+        btn.disabled = disabled;
+        btn.textContent = disabled ? "…" : "Отправить";
+    }
+
+    // Init
+    updateScrollButton();
+
+    document.getElementById("user-input").addEventListener("keypress", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+</script>
+</body>
+</html>

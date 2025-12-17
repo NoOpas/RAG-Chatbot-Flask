@@ -1,0 +1,40 @@
+rag-chat/
+│
+├── app/                          # Core application logic
+│   ├── __init__.py               # App factory
+│   ├── settings.py               # Settings (DB, paths, etc.)
+│   ├── models/                   # ML/AI models & utilities
+│   │   ├── __init__.py
+│   │   ├── llm.py                # Saiga loading, generation
+│   │   ├── embedding.py          # SBERT/E5 embedding
+│   │   └── stopping.py           # StopOnSequence class
+│   │
+│   ├── rag/                      # RAG pipeline
+│   │   ├── __init__.py
+│   │   ├── search.py             # search_similar_texts
+│   │   ├── context.py            # truncate_context_by_tokens
+│   │   └── pipeline.py           # rag_pipeline_stream
+│   │
+│   ├── prompts/                  # Building prompts
+│   │   ├── RAG_template.py       # RAG prompt builder
+│   │   └── <...>_template.py     # Adding other prompt builders possible
+│   │
+│   ├── db/                       # Database layer
+│   │   ├── __init__.py
+│   │   └── connection.py         # get_db_connection, pooling
+│   │
+│   └── routes/                   # Flask routes & SSE
+│       ├── __init__.py
+│       └── chat.py               # index(), stream_response()
+│
+├── templates/
+│   └── index_streaming.html      # Front-end file 
+├── static/
+│   └── style.css                 # Front-end style file 
+│
+├── logs/                         # (auto-created) directory with logs
+│
+├── chat.py                       # Main file that starts the app
+├── pyproject.toml                # Main libraries version control file
+├── uv.lock                       # (auto-created) file with the info about all of installed dependencies 
+└── README.md                     # 
