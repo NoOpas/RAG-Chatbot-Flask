@@ -35,7 +35,7 @@
 
 ## ⚙️ Технологический стек
 
-| Layer | Technology | Why |
+| Слой | Технология | Причина выбора |
 |-------|------------|-----|
 | **Backend** | Flask 2.x, Python 3.10+ | Лёгковесный, быстрая разработка, идеален для прототипирования и продакшена |
 | **LLM** | Saiga-Mistral-7B-GPTQ (4-bit) | Оптимальный баланс качества и производительности на GPU с 8+ ГБ VRAM |
@@ -90,6 +90,13 @@ uv sync          # устанавливает зависимости из pyproj
 > git lfs install
 > git clone https://huggingface.co/TheBloke/saiga_mistral_7b-GPTQ  
 > git clone https://huggingface.co/intfloat/multilingual-e5-small  
+> ```
+> 
+> 📌 Возможно использовать HF для установки (в среде `uv`):
+> ```bash
+> uv tool install hf
+> hf download TheBloke/saiga_mistral_7b-GPTQ 
+> hf download intfloat/multilingual-e5-small  
 > ```
 
 ---
@@ -258,9 +265,9 @@ EMBEDDING_MODEL_PATH = "./models/multilingual-e5-small"
 
 # DB
 DB_HOST = "localhost"
-DB_NAME = "sp_parse"
-DB_USER = "my_user"
-DB_PASSWORD = "my_password"
+DB_NAME = "db_name"
+DB_USER = "db_user"
+DB_PASSWORD = "db_password"
 
 # RAG
 TOP_K = 3
@@ -274,3 +281,4 @@ LOG_FILE = "./logs/rag_chat.log"
 > 💡 Измените `DB_*` параметры под вашу инфраструктуру.
 
 ---
+
