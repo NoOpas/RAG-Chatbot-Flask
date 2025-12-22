@@ -1,5 +1,6 @@
 # 📄 RAG Чатбот / RAG Chatbot
-> Локальный ассистент LLM на базе Saiga-Mistral-7B с бэкендом PostgreSQL + pgvector / Local LLM assistant based on Saiga-Mistral-7B with PostgreSQL + pgvector backend  
+> 🇷🇺 Локальный ассистент LLM на базе Saiga-Mistral-7B с бэкендом PostgreSQL + pgvector
+> 🇬🇧 Local LLM assistant based on Saiga-Mistral-7B with PostgreSQL + pgvector backend  
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://python.org)
 [![Flask](https://img.shields.io/badge/Flask-2.x-black)](https://flask.palletsprojects.com)
@@ -545,5 +546,6 @@ TOP_K = 3
 MAX_CONTEXT_TOKENS = 3000
 LOG_FILE = "./logs/rag_chat.log"
 ```
+
 
 
