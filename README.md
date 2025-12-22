@@ -1,7 +1,7 @@
 # 📄 README.md
 
 # Чат-бот по учебно-справочному порталу: RAG-ассистент на базе Saiga-Mistral-7B  
-> Локальный чат-бот, интегрированный с системой хранения данных 
+> Локальный чат-бот с интегрированный с системой хранения и поиска данных 
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://python.org)  
 [![Flask](https://img.shields.io/badge/Flask-2.x-black)](https://flask.palletsprojects.com)  
@@ -92,17 +92,20 @@ uv sync          # устанавливает зависимости из pyproj
 > git clone https://huggingface.co/intfloat/multilingual-e5-small  
 > ```
 > 
-> 📌 Возможно использовать HF для установки (в среде `uv`):
+> 📌 Возможно использовать HuggingFace CLI для установки (в среде `uv`):
 > ```bash
-> uv tool install hf
-> hf download TheBloke/saiga_mistral_7b-GPTQ 
-> hf download intfloat/multilingual-e5-small  
+> uv ad huggingface-hub
+> uv run huggingface-cli download TheBloke/saiga_mistral_7b-GPTQ --local-dir ./models/saiga_mistral_7b-GPTQ
+> uv run huggingface-cli download intfloat/multilingual-e5-small --local-dir ./models/multilingual-e5-small
 > ```
 
 ---
 
 ### 5.4 Настройка базы данных
 #### Шаг 1: Исходная таблица (`sp_parse_vectors` или аналогичная)
+
+Таблица была создана при помощи парсинга информационного портала.  
+Подобную таблицу возможно создать вручную, но это очень не эффективно.
 
 | id | url | content |
 |----|-----|---------|
@@ -281,4 +284,5 @@ LOG_FILE = "./logs/rag_chat.log"
 > 💡 Измените `DB_*` параметры под вашу инфраструктуру.
 
 ---
+
 
