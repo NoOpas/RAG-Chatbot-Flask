@@ -25,7 +25,7 @@
   - [Как работает приложение](#как-работает-приложение)
   - [Конфигурация](#конфигурация)
 
-- [🇬🇧 English version](#-english-version)
+- [🇪🇳 English version](#-english-version)
   - [Overview](#-overview)
   - [Implemented Features](#implemented-features)
   - [Tech Stack](#tech-stack)
@@ -300,7 +300,7 @@ LOG_FILE = "./logs/rag_chat.log"
 ---
 
 <a name="en-version"></a>
-# 🇬🇧 English version
+# 🇪🇳 English version
 
 ## 📖 Overview
 
@@ -546,6 +546,7 @@ TOP_K = 3
 MAX_CONTEXT_TOKENS = 3000
 LOG_FILE = "./logs/rag_chat.log"
 ```
+
 
 
 
