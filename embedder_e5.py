@@ -1,6 +1,6 @@
 import psycopg2
 from sentence_transformers import SentenceTransformer
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitter import RecursiveCharacterTextSplitter
 from loguru import logger 
 import sys # Для логгера
 
